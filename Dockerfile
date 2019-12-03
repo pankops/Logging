@@ -4,7 +4,6 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 # Copy csproj and restore as distinct layers.
 WORKDIR /app
 COPY ./Logging .
-RUN dotnet restore
 
 # Copy local code to the container image.
 COPY . .
