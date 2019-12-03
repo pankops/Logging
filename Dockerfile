@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 # Install production dependencies.
 # Copy csproj and restore as distinct layers.
 WORKDIR /app
-COPY *.csproj .
+COPY Logging.csproj .
 RUN dotnet restore
 
 # Copy local code to the container image.
