@@ -1,21 +1,17 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 
-ENV ASPNETCORE_URLS http://*:5000
+WORKDIR /app
 
-RUN mkdir /opt/app
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
 
-ADD output /opt/app
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-RUN apt-get update && \
-apt-get remove -y curl sqlite3 \
-&& apt autoremove -y 
-
-RUN apt-get update && \
-apt-get upgrade -y && \
-rm -rf /var/lib/apt/lists/*
-
-RUN adduser --disabled-password --gecos "" dotnetuser
-
-USER dotnetuser
-
-CMD ["dotnet", "opt/app/Logging.dll"]
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
+WORKDIR /app
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "logging.dll"]
